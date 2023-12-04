@@ -4,6 +4,8 @@ import Model from "./Model";
 import { useState } from "react";
 
 export default function LoanForm() {
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [showModel, setShowModel] = useState(false);
   const [loanInputs, setLoanInputs] = useState({
     name: "",
     phone: "",
@@ -13,9 +15,29 @@ export default function LoanForm() {
   });
   const btDisable =
     loanInputs.name == "" || loanInputs.age == "" || loanInputs.phone == "";
+  function handelClick(event) {
+    event.preventDefault();
 
+    setErrorMessage(null);
+    const { age, phone } = loanInputs;
+    if (age < 18 || age > 80) {
+      setErrorMessage("The age is not allowed!");
+    } else if (phone.length < 10 || phone.length > 12) {
+      setErrorMessage("The phone is not allowed!");
+    }
+
+    setShowModel(true);
+  }
   return (
-    <div className="flex" style={{ flexDirection: "column" }}>
+    <div
+      className="flex"
+      style={{ flexDirection: "column" }}
+      onClick={() => {
+        if (showModel) {
+          setShowModel(false);
+        }
+      }}
+    >
       <form className="flex" id="loan-form" style={{ flexDirection: "column" }}>
         <h1>Requesting a loan</h1>
         <hr />
@@ -69,16 +91,12 @@ export default function LoanForm() {
           className={btDisable ? "disabled" : ""}
           id="sumit-laon-btn"
           disabled={btDisable}
-          onClick={(event) => {
-            event.preventDefault();
-            alert("hello");
-            console.log(btDisable);
-          }}
+          onClick={handelClick}
         >
           Submit
         </button>
       </form>
-      {/* <Model /> */}
+      <Model isVisabled={showModel} errorMessage={errorMessage} />
     </div>
   );
 }
