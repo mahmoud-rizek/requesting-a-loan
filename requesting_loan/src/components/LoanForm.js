@@ -1,6 +1,8 @@
 import { flushSync } from "react-dom";
 import "./FormStyles.css";
 import Model from "./Model";
+import MyComponent from "./MyComponent";
+import { LoanInputContext } from "../contexts/LoanFormInputContext";
 import { useState } from "react";
 
 export default function LoanForm() {
@@ -23,10 +25,21 @@ export default function LoanForm() {
     if (age < 18 || age > 80) {
       setErrorMessage("The age is not allowed!");
     } else if (phone.length < 10 || phone.length > 12) {
-      setErrorMessage("The phone is not allowed!");
+      setErrorMessage("The Phone Number Format Is Incorrect!");
     }
 
     setShowModel(true);
+  }
+  function handelPhoneInput(value) {
+    setLoanInputs({ ...loanInputs, phone: value });
+  }
+
+  function handelNameInput(value) {
+    setLoanInputs({ ...loanInputs, name: value });
+  }
+
+  function handelAgeInput(value) {
+    setLoanInputs({ ...loanInputs, age: value });
   }
   return (
     <div
@@ -41,30 +54,34 @@ export default function LoanForm() {
       <form className="flex" id="loan-form" style={{ flexDirection: "column" }}>
         <h1>Requesting a loan</h1>
         <hr />
+        <LoanInputContext.Provider
+          value={{
+            labelTitle: "Name",
+            value: loanInputs.name,
+            handleChange: handelNameInput,
+          }}
+        >
+          <MyComponent />
+        </LoanInputContext.Provider>
 
-        <label>Name: </label>
-        <input
-          value={loanInputs.name}
-          onChange={(event) =>
-            setLoanInputs({ ...loanInputs, name: event.target.value })
-          }
-        />
-
-        <label>Phone Number: </label>
-        <input
-          value={loanInputs.phone}
-          onChange={(event) =>
-            setLoanInputs({ ...loanInputs, phone: event.target.value })
-          }
-        />
-
-        <label>Age: </label>
-        <input
-          value={loanInputs.age}
-          onChange={(event) =>
-            setLoanInputs({ ...loanInputs, age: event.target.value })
-          }
-        />
+        <LoanInputContext.Provider
+          value={{
+            labelTitle: "Phone Number",
+            value: loanInputs.phone,
+            handleChange: handelPhoneInput,
+          }}
+        >
+          <MyComponent />
+        </LoanInputContext.Provider>
+        <LoanInputContext.Provider
+          value={{
+            labelTitle: "Age",
+            value: loanInputs.age,
+            handleChange: handelAgeInput,
+          }}
+        >
+          <MyComponent />
+        </LoanInputContext.Provider>
 
         <label style={{ marginTop: "30px" }}>Are you an employee? </label>
         <input
